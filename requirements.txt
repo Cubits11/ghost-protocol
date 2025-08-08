@@ -1,0 +1,35 @@
+# Ghost Protocol v0.1 - Core Dependencies
+# Encryption and Security
+cryptography==41.0.7
+pysqlcipher3==1.2.0
+
+# Data Processing and ML
+numpy==1.24.3
+pandas==2.0.3
+
+# Configuration and Parsing
+PyYAML==6.0.1
+jsonschema==4.19.0
+
+# Web UI and Demos
+streamlit==1.28.1
+plotly==5.17.0
+
+# Testing and Quality
+pytest==7.4.2
+pytest-asyncio==0.21.1
+pytest-cov==4.1.0
+
+# Privacy and Differential Privacy
+opacus==1.4.0
+diffprivlib==0.6.0
+
+# Optional: Advanced Features
+torch==2.0.1  # For local AI models
+transformers==4.33.2  # For LLM integration
+ply==3.11  # For advanced DSL parsing
+
+# Development Tools
+black==23.7.0
+flake8==6.0.0
+mypy==1.5.1

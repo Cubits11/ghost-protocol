@@ -1,0 +1,72 @@
+ghost_protocol/
+├── pyproject.toml
+├── README.md
+├── Makefile
+├── configs/
+│   ├── default.yaml
+│   ├── development.yaml
+│   └── production.yaml
+├── policies/                         # versioned DSL/YAML policies (source of truth)
+│   ├── emotional_boundaries.yaml
+│   ├── privacy_rules.yaml
+│   └── interaction_limits.yaml
+├── deployments/
+│   ├── docker/
+│   │   ├── Dockerfile
+│   │   └── docker-compose.yml
+│   └── k8s/                          # optional later
+├── benchmarks/
+│   ├── constraint_throughput.py
+│   ├── local_vs_cloud_latency.py
+│   ├── privacy_vs_accuracy.py
+│   └── results/
+├── docs/
+│   ├── ARCHITECTURE.md
+│   ├── CONSTRAINTS.md
+│   ├── PRIVACY.md
+│   ├── EVALUATION.md
+│   └── api/
+├── scripts/
+│   ├── run_tests.sh
+│   ├── run_benchmarks.sh
+│   └── generate_docs.sh
+├── tests/
+│   ├── unit/
+│   │   ├── test_constraints.py
+│   │   ├── test_privacy.py
+│   │   ├── test_routing.py
+│   │   └── test_audit_log.py
+│   └── integration/
+│       └── test_full_pipeline.py
+└── src/ghost_protocol/
+    ├── core/                        # pure logic, no I/O, easy to test
+    │   ├── types.py                 # dataclasses/enums (ConstraintType, ActionType, etc.)
+    │   ├── constraints/
+    │   │   ├── dsl.py               # ConditionEngine + validator (from dsl/parser.py)
+    │   │   ├── compiler.py          # YAML → CompiledConstraint (from ConstitutionalParser)
+    │   │   └── enforcer.py          # ConstraintEnforcer (+ analyzers + session tracker)
+    │   ├── privacy/
+    │   │   └── analyzer.py          # PrivacyAnalyzer (precompiled regex, redact, score)
+    │   └── emotion/
+    │       └── analyzer.py          # EmotionAnalyzer (patterns, intensity, primary emotion)
+    ├── services/                    # orchestration (wires core + adapters)
+    │   ├── policy_engine.py         # load policies, hot-reload, versioning
+    │   └── router.py                # processing route selection (local/cloud), already present
+    ├── adapters/                    # anything that touches the world
+    │   ├── storage/
+    │   │   └── vault.py             # your existing vault (file/sqlite)
+    │   ├── logging/
+    │   │   └── audit.py             # audit sink (jsonl/log files)
+    │   ├── llm/
+    │   │   └── provider_stub.py     # later: openai/anthropic/local
+    │   └── security/
+    │       └── crypto.py            # key loading, HMAC, etc.
+    ├── api/
+    │   ├── __init__.py
+    │   └── http.py                  # FastAPI app factory: create_app(config)
+    ├── cli/
+    │   └── main.py                  # `python -m ghost_protocol.cli` or console_script `ghost`
+    └── ui/
+        ├── dashboard.py             # streamlit dashboard
+        ├── editor.py
+        └── monitor.py

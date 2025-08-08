@@ -1,0 +1,159 @@
+# docker-compose.yml - Ghost Protocol v0.1 Deployment Stack
+version: '3.8'
+
+services:
+  ghost-protocol:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        GHOST_VERSION: "0.1.0"
+        BUILD_DATE: "${BUILD_DATE:-2024-01-01T00:00:00Z}"
+        VCS_REF: "${VCS_REF:-main}"
+    image: ghost-protocol:0.1.0
+    container_name: ghost-protocol-app
+    restart: unless-stopped
+
+    # Environment configuration
+    environment:
+      - GHOST_ENV=production
+      - GHOST_LOG_LEVEL=INFO
+      - GHOST_ENCRYPTION_PASSWORD=${GHOST_ENCRYPTION_PASSWORD:-ghost_protocol_secret_key}
+      - GHOST_PRIVACY_BUDGET_EPSILON=${GHOST_PRIVACY_BUDGET_EPSILON:-8.0}
+      - GHOST_PRIVACY_BUDGET_DELTA=${GHOST_PRIVACY_BUDGET_DELTA:-1e-5}
+      - GHOST_SESSION_TIMEOUT=${GHOST_SESSION_TIMEOUT:-60}
+      - GHOST_MEMORY_DECAY_ENABLED=${GHOST_MEMORY_DECAY_ENABLED:-true}
+      - GHOST_AUDIT_LOGGING_ENABLED=${GHOST_AUDIT_LOGGING_ENABLED:-true}
+
+    # Port mapping
+    ports:
+      - "8501:8501"  # Streamlit UI
+
+    # Volume mounts for persistence
+    volumes:
+      - ghost_data:/app/data
+      - ghost_config:/app/config
+      - ./deployment/config/default_constraints.yaml:/app/config/constraints.yaml:ro
+
+    # Security settings
+    security_opt:
+      - no-new-privileges:true
+    read_only: false  # Need write access for database
+    tmpfs:
+      - /tmp:noexec,nosuid,size=100m
+
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+
+    # Health check
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sys; sys.path.append('/app'); from ghost_protocol_main import GhostProtocolSystem; g = GhostProtocolSystem(); print('healthy' if g.system_initialized else 'unhealthy'); g.close()"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    # Networks
+    networks:
+      - ghost-network
+
+  # CLI service for running commands
+  ghost-cli:
+    image: ghost-protocol:0.1.0
+    container_name: ghost-protocol-cli
+    profiles: ["cli"]  # Only start when explicitly requested
+
+    environment:
+      - GHOST_ENV=production
+      - GHOST_LOG_LEVEL=INFO
+      - GHOST_ENCRYPTION_PASSWORD=${GHOST_ENCRYPTION_PASSWORD:-ghost_protocol_secret_key}
+
+    volumes:
+      - ghost_data:/app/data
+      - ghost_config:/app/config
+
+    # Override default command for CLI
+    command: python cli.py --demo
+
+    # Interactive mode
+    stdin_open: true
+    tty: true
+
+    networks:
+      - ghost-network
+
+    depends_on:
+      ghost-protocol:
+        condition: service_healthy
+
+  # Monitoring service (optional)
+  ghost-monitor:
+    image: ghost-protocol:0.1.0
+    container_name: ghost-protocol-monitor
+    profiles: ["monitoring"]  # Only start when explicitly requested
+
+    environment:
+      - GHOST_ENV=production
+      - GHOST_LOG_LEVEL=DEBUG
+
+    volumes:
+      - ghost_data:/app/data:ro
+      - ghost_config:/app/config:ro
+
+    # Run monitoring script
+    command: python -c "
+      import time
+      import json
+      from ghost_protocol_main import GhostProtocolSystem
+      
+      ghost = GhostProtocolSystem()
+      while True:
+          status = ghost.get_system_status()
+          print(f'[{time.strftime(\"%Y-%m-%d %H:%M:%S\")}] System Status: {json.dumps(status, default=str)}')
+          time.sleep(60)
+      "
+
+    networks:
+      - ghost-network
+
+    depends_on:
+      ghost-protocol:
+        condition: service_healthy
+
+# Named volumes for data persistence
+volumes:
+  ghost_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data
+
+  ghost_config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./deployment/config
+
+# Network configuration
+networks:
+  ghost-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
