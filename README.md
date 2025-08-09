@@ -99,7 +99,7 @@ streamlit run ui/dashboard.py
 ⸻
 
 📋 Example Constitutional Constraints
-
+```
 constraints:
   emotional_boundaries:
     - name: "anger_support"
@@ -118,7 +118,7 @@ constraints:
       condition: "session_duration > 60"
       action: "suggest_break"
       severity: "medium"
-
+```
 
 ⸻
 
@@ -140,13 +140,13 @@ python benchmarks/constraint_throughput.py
 ⸻
 
 📊 Benchmarks
-
+```
 Component	Latency	Throughput	Privacy Guarantee
 Constraint Evaluation	<5ms	1000+ req/sec	Full
 Memory Storage	<10ms	500+ req/sec	AES-256
 Privacy Budget	<1ms	10000+ req/sec	ε-DP
 Local Inference	150ms	10 req/sec	Complete
-
+```
 
 ⸻
 
@@ -162,7 +162,7 @@ Local Inference	150ms	10 req/sec	Complete
 🛠️ Development Guide
 
 Project Structure
-
+```
 ghost_protocol_v01/
 ├── core/                 # Core components
 ├── dsl/                  # Constitutional DSL  
@@ -172,7 +172,7 @@ ghost_protocol_v01/
 ├── deployment/           # Deployment configs
 ├── docs/                 # Documentation
 └── examples/             # Example usage & policies
-
+```
 Add Custom Constraints
 	1.	Create a YAML file in dsl/examples/
 	2.	Load with ghost.load_user_constraints(yaml_content)
