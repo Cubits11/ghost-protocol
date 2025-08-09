@@ -186,11 +186,18 @@ For academic usage and collaboration, please cite:
   note={Available at: https://github.com/yourusername/ghost_protocol_v01}
 }
 ```
-## Quickstart (60 seconds)
+## ⚡ 60-Second Quickstart
+
+You can try Ghost Protocol immediately from the CLI — no extra config needed.
 
 ```bash
+# 1. Install in editable mode (for dev/demo)
 pip install -e .
-ghost --policy-dir policies --text "email me at jane@corp.com" --debug
+
+# 2. Run the built-in CLI with example policy + text
+ghost --policy-dir examples/policies \
+      --text "email me at jane@corp.com" \
+      --debug
 ```
 ## 📞 Contact
 
