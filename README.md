@@ -1,8 +1,3 @@
-Got it — here’s the friendly, copy-paste-ready .md file you can drop straight into your repo as README.md.
-I kept all your technical depth but made it readable and “inviting” so someone opening the repo feels both impressed and encouraged to try it immediately.
-
-⸻
-
 
 # 👻 Ghost Protocol v0.1
 
@@ -36,8 +31,8 @@ pip install -e .
 ghost --policy-dir examples/policies \
       --text "email me at jane@corp.com" \
       --debug
-
-What happens next?
+```
+What happens?
 	•	Your input is checked against constitutional constraints (YAML → validated → compiled → enforced)
 	•	Violations are flagged in human-readable and JSON forms
 	•	Processing route (local_only vs. cloud_ok) is chosen instantly
@@ -58,7 +53,7 @@ Example JSON output:
   "processing_route": "local_only"
 }
 
-💡 Want to tweak constraints? Just edit the YAML in examples/policies and rerun.
+##💡 Want to tweak constraints? Just edit the YAML in examples/policies and rerun.
 
 ⸻
 
@@ -236,9 +231,4 @@ Citation:
 
 ⸻
 
-Built with ❤️ for emotional sovereignty and AI alignment
-
----
-
-If you want, I can also **embed example output screenshots** right under the Quickstart so your README visually *proves* it works in under a minute — that’s huge for first impressions.  
-Do you want me to do that next?
+Built with ❤️ for emotional sovereignty and AI alignment.
