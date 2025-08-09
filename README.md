@@ -186,7 +186,12 @@ For academic usage and collaboration, please cite:
   note={Available at: https://github.com/yourusername/ghost_protocol_v01}
 }
 ```
+## Quickstart (60 seconds)
 
+```bash
+pip install -e .
+ghost --policy-dir policies --text "email me at jane@corp.com" --debug
+```
 ## 📞 Contact
 
 - **Research Inquiries**: research@ghostprotocol.ai
