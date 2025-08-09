@@ -18,7 +18,7 @@ Ghost Protocol is the first technically enforceable framework for emotionally so
 ### Installation
 
 ```bash
-git clone https://github.com/yourusername/ghost_protocol_v01.git
+git clone https://github.com/Cubits11/ghost_protocol_v01.git
 cd ghost_protocol_v01
 pip install -r requirements.txt
 ```
